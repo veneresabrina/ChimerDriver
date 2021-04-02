@@ -31,51 +31,54 @@ conda install -c conda-forge matplotlib=3.3.2
 ```
 The above requirements are also listed in the requirements.txt files.
 
-# Additional files
-## Genome reference
-The genome reference files where downloaded from release 95 and release 87 respectively for the genome version 38 and the genome version 37:
-```
-cd pre-process/
-wget ftp://ftp.ensembl.org/pub/release-95/gtf/homo_sapiens/Homo_sapiens.GRCh38.95.gtf.gz
-wget ftp://ftp.ensembl.org/pub/release-87/gtf/homo_sapiens/Homo_sapiens.GRCh37.87.gtf.gz
-python read_grch.py 37
-python read_grch.py 38
-```
-The final output should be two .csv files named *"grch37.csv"* and *"grch38.csv"* to be found in the same directory as the main code.
-## Gene attribute matrix
-To obtain the database for the transcription factors download the gene attribute matrix and the gene list from *ENCODE Project Consortium*:
-```
-cd pre-process/
-wget https://maayanlab.cloud/static/hdfs/harmonizome/data/encodetfppi/gene_attribute_matrix.txt.gz
-wget https://maayanlab.cloud/static/hdfs/harmonizome/data/encodetfppi/gene_list_terms.txt.gz
-python read_gene_attr_matr.py
-```
-The final output should be a .csv file named *"gene_attribute_matrix.csv"* to be found in the same directory as the main code.
-## Gene attribute matrix info biomart
-## miRNA gene matrix
-The miRNA database was obtained from TargetScan (release 7.2) and processed in the following way:
-```
-cd pre-process/
-wget http://www.targetscan.org/vert_72/vert_72_data_download/Predicted_Targets_Info.default_predictions.txt.zip
-unzip Predicted_Targets_Info.default_predictions.txt.zip
-python obtain_miRNA_matrix.py
-```
-## Cancermine
-To obtain the database containing the gene roles type the following code:
-```
-cd pre-process/
-wget https://zenodo.org/record/4580271/files/cancermine_collated.tsv?download=1
-python read_cancermine.py
-```
-The final output should be a .csv file named *"cancermine.csv"* to be found in the same directory as the main code.
-
 # Directory structure and files
 ```
 ChimerDriver.py -> main code
 ChimerDriver_tools.py -> python module containing all the necessary functions to run the main code
+processed_db.zip:
+    gene_attribute_matrix.csv -> database containing the transcription factors for each gene
+    gene_attribute_matrix_info_biomart.txt -> database containing the gene ontologies for each gene
+    miRNA_gene_matrix.csv -> database containing the microRNA probabilities for each gene
+    cancermine.csv -> database for the roles of genes, either driver, tumor suppressor, oncogenic or other
+```
+# Build the features
+The features for the training set and the test set must be constructed using the following four arguments: 
+- "build"
+- "file.csv"
+- "train/train_again/test" - train if the set will serve as a training set, train_again if the dataset will be merged with a previously built train set and will serve as a trainig set, test otherwise
+- "1/0/N" - 1 if the label of the entire dataset is positive (e.g oncogenic gene fusion), 0 if it is negative, N if the "Label" column is already provided in the dataset
+Note: the training set must be built before any of the testing sets
+```
+Build the training set features -> python ChimerDriver.py build DEEPrior_data/training_set.csv train N
+Build the validation set features -> python ChimerDriver.py build DEEPrior_data/test_set_1.csv test N
+Build the test set features -> python ChimerDriver.py build DEEPrior_data/test_set_2_con_non_onco.csv test N
+```
+# Training
+To cross validate the model with 10-fold cross validation on the provided training set the command line takes the following arguments:
+- "train"
+- "trainset.csv"
+- "testset.csv"
+- "valset.csv"
+- "num_epochs" - max number of training epochs
+- "forest/subset/subset_forest" - either use the random forest selection to reduce the number of features, use a subset of features or combine the two to obtain a feature set made of the selected databases and reduced by the random forest method
+- "5/TF/GO/miRNA/5_TF/5_miR/5_GO/TF_miR/GO_TF/GO_miR/5_TF_miR/5_GO_miR/5_GO_TF/5_GO_TF_miR" - pick the features from the transcription factor database (TF), the gene ontologies database (GO), the microRNA database (miRNA), the structural features set (5) or any provided combination of these sets.    
+- "forest_thresh" - threshold for the random forest feature selection
+- "lr" - learning rate
+- "dropout" - dropout value
 
+Train the model on training.set.csv, validate it using the samples in test_set_1.csv. The maximum possible training epochs is 3000, the model uses the random forest selection method on the complete set of features with a threshold of 0.0005. The learning rate is 0.01 and the dropout is 0.2
+```
+python ChimerDriver.py train DEEPrior_data/training_set.csv DEEPrior_data/test_set_2_con_non_onco.csv DEEPrior_data/test_set_1.csv 3000 forest all 0.0005 0.01 0.2
+```
+Train the model on training.set.csv, validate it using the samples in test_set_1.csv. The maximum possible training epochs is 1000, the model uses the transcription factor features only. The learning rate is 0.001 and the dropout is 0.1
+```
+python ChimerDriver.py train DEEPrior_data/training_set.csv DEEPrior_data/test_set_2_con_non_onco.csv DEEPrior_data/test_set_1.csv 1000 subset TF 0 0.01 0.1
+```
+Train the model on training.set.csv, validate it using the samples in test_set_1.csv. The maximum possible training epochs is 1000, the model uses all the features except for the miRNAs and reduces the number of features with a random forest characterized by a threshold equal to 0.0005. The learning rate is 0.001 and the dropout is 0
+```
+python ChimerDriver.py train DEEPrior_data/training_set.csv DEEPrior_data/test_set_2_con_non_onco.csv DEEPrior_data/test_set_1.csv 1000 subset 5_GO_TF 0.005 0.01 0
 ```
 
-# Training
 
 # Testing
+The command line arguments are the same used for the training phase with the exception of the first one which will be "test" instead of "train"
