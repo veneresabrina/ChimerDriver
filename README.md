@@ -1,6 +1,6 @@
 # ChimerDriver
 
-# Citation
+## Citation
 
 Please cite the following paper if this code was useful for your research:
 
@@ -18,7 +18,7 @@ Download from here (PDF):
 }
 
 ```
-# Prerequisites
+## Prerequisites
 The code is tested under Python 3.6.12 with TensorFlow (GPU) 2.2.0 and Keras 2.4.3. backend, Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz
 The environment can be created with conda by entering the following commands:
 ```
@@ -31,7 +31,7 @@ conda install -c conda-forge matplotlib=3.3.2
 ```
 The above requirements are also listed in the requirements.txt files.
 
-# Directory structure and files
+## Directory structure and files
 ```
 ChimerDriver.py -> main code
 ChimerDriver_tools.py -> python module containing all the necessary functions to run the main code
@@ -41,7 +41,7 @@ processed_db.zip:
     miRNA_gene_matrix.csv -> database containing the microRNA probabilities for each gene
     cancermine.csv -> database for the roles of genes, either driver, tumor suppressor, oncogenic or other
 ```
-# Build the features
+## Build the features
 The features for the training set and the test set must be constructed using the following four arguments: 
 - "build"
 - "file.csv"
@@ -53,7 +53,7 @@ Build the training set features -> python ChimerDriver.py build DEEPrior_data/tr
 Build the validation set features -> python ChimerDriver.py build DEEPrior_data/test_set_1.csv test N
 Build the test set features -> python ChimerDriver.py build DEEPrior_data/test_set_2_con_non_onco.csv test N
 ```
-# Training
+## Training
 To cross validate the model with 10-fold cross validation on the provided training set the command line takes the following arguments:
 - "train"
 - "trainset.csv"
@@ -80,5 +80,5 @@ python ChimerDriver.py train DEEPrior_data/training_set.csv DEEPrior_data/test_s
 ```
 
 
-# Testing
+## Testing
 The command line arguments are the same used for the training phase with the exception of the first one which will be "test" instead of "train"
