@@ -42,7 +42,7 @@ processed_db.zip:
     cancermine.csv -> database for the roles of genes, either driver, tumor suppressor, oncogenic or other
 ```
 ## Installation
-After successfully creating the working environment unzip the processed_db.zip folder. The four pre-processed databases should be in the same directory as the main code and the python module.
+After successfully creating the working environment unzip the *processed_db.zip* folder. The four pre-processed databases should be in the same directory as the main code and the python module.
 In order to replicate the experiments on the provided dataset the first step is creating the features for the training and test sets as described in the subsection "Build features".
 Next one can either cross-validate the model or test it on the provided testing set as described in the subsections below. 
 
