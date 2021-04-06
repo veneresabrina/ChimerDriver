@@ -102,7 +102,7 @@ python ChimerDriver.py train DEEPrior_data/training_set.csv DEEPrior_data/test_s
 ### Testing
 The command line arguments are the same used for the training phase with the exception of the first one which will be "test" instead of "train".
 
-Test the model using the prostate and breast samples provided in the use_case folder. Train the model on training_set.csv, test it on the samples belonging to the SRR***.csv files. No samples provided to validate the model during training therefore the training will stop after 500 epochs. Any subset of feature is considered and reduced with the random forest characterized by a threshold of 0.0005. The learning rate is 0.001 and the dropout is 0.2.
+Test the model using the prostate and breast samples provided in the *use_cases_brest_prostate* folder. Train the model on training_set.csv, test it on the samples belonging to the SRR***.csv files listed below. No samples provided to validate the model during training therefore the training will stop after 500 epochs. Each subset of feature is considered and the number of features is reduced with the random forest characterized by a threshold of 0.0005. The learning rate is 0.001 and the dropout is 0.2.
 ```
 python ChimerDriver.py test use_cases_breast_prostate/training_set.csv use_cases_breast_prostate/X_SRR064286.csv+use_cases_breast_prostate/X_SRR064287.csv+use_cases_breast_prostate/X_SRR064438.csv+use_cases_breast_prostate/X_SRR064439.csv+use_cases_breast_prostate/X_SRR064440.csv+use_cases_breast_prostate/X_SRR064441.csv+use_cases_breast_prostate/X_SRR496597.csv+use_cases_breast_prostate/X_SRR496595.csv+use_cases_breast_prostate/X_SRR496481.csv . 500 forest all 0.0005 0.001 0.2
 ```
