@@ -91,18 +91,18 @@ python ChimerDriver.py train DEEPrior_data/training_set.csv DEEPrior_data/test_s
 ```
 Train the model on training_set.csv, validate it using the samples in test_set_1.csv. The maximum possible training epochs is 1000, the model uses the transcription factor features only. The learning rate is 0.001 and the dropout is 0.1
 ```
-python ChimerDriver.py train DEEPrior_data/training_set.csv DEEPrior_data/test_set_2_con_non_onco.csv DEEPrior_data/test_set_1.csv 1000 subset TF 0 0.01 0.1
+python ChimerDriver.py train DEEPrior_data/training_set.csv DEEPrior_data/test_set_2_con_non_onco.csv DEEPrior_data/test_set_1.csv 1000 subset TF 0.0005 0.001 0.1
 ```
 Train the model on training_set.csv, validate it using the samples in test_set_1.csv. The maximum possible training epochs is 1000, the model uses all the features except for the miRNAs and reduces the number of features with a random forest characterized by a threshold equal to 0.0005. The learning rate is 0.001 and the dropout is 0
 ```
-python ChimerDriver.py train DEEPrior_data/training_set.csv DEEPrior_data/test_set_2_con_non_onco.csv DEEPrior_data/test_set_1.csv 1000 subset 5_GO_TF 0.005 0.01 0
+python ChimerDriver.py train DEEPrior_data/training_set.csv DEEPrior_data/test_set_2_con_non_onco.csv DEEPrior_data/test_set_1.csv 1000 subset 5_GO_TF 0.0005 0.001 0
 ```
 
 
 ### Testing
 The command line arguments are the same used for the training phase with the exception of the first one which will be "test" instead of "train".
 
-Test the model using the prostate and breast samples provided in the use_case folder. Train the model on training_set.csv, test it on the samples belonging to the SRR***.csv files.
+Test the model using the prostate and breast samples provided in the use_case folder. Train the model on training_set.csv, test it on the samples belonging to the SRR***.csv files. No samples provided to validate the model during training therefore the training will stop after 500 epochs. Any subset of feature is considered and reduced with the random forest characterized by a threshold of 0.0005. The learning rate is 0.001 and the dropout is 0.2.
 ```
-python ChimerDriver.py test use_cases_breast_prostate/training_set.csv use_cases_breast_prostate/X_SRR064286.csv+use_cases_breast_prostate/X_SRR064287.csv+use_cases_breast_prostate/X_SRR064438.csv+use_cases_breast_prostate/X_SRR064439.csv+use_cases_breast_prostate/X_SRR064440.csv+use_cases_breast_prostate/X_SRR064441.csv+use_cases_breast_prostate/X_SRR496597.csv+use_cases_breast_prostate/X_SRR496595.csv+use_cases_breast_prostate/X_SRR496481.csv . forest all 0.0005 0.001 0.2
+python ChimerDriver.py test use_cases_breast_prostate/training_set.csv use_cases_breast_prostate/X_SRR064286.csv+use_cases_breast_prostate/X_SRR064287.csv+use_cases_breast_prostate/X_SRR064438.csv+use_cases_breast_prostate/X_SRR064439.csv+use_cases_breast_prostate/X_SRR064440.csv+use_cases_breast_prostate/X_SRR064441.csv+use_cases_breast_prostate/X_SRR496597.csv+use_cases_breast_prostate/X_SRR496595.csv+use_cases_breast_prostate/X_SRR496481.csv . 500 forest all 0.0005 0.001 0.2
 ```
