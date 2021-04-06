@@ -1,5 +1,5 @@
 # ChimerDriver
-
+A machine learning tool that assesses the oncogenic potential of gene fusions.
 ## Citation
 
 Please cite the following paper if this code was useful for your research:
