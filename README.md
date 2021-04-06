@@ -61,16 +61,16 @@ Build the test set features -> python ChimerDriver.py build DEEPrior_data/test_s
 ```
 The files processed with Starfusion should be handled accordingly to test the model performances:
 ```
-python ChimerDriver.py build use_case/training_set.csv train N
-python ChimerDriver.py build use_case/X_SRR064286.csv test 1
-python ChimerDriver.py build use_case/X_SRR064287.csv test 1
-python ChimerDriver.py build use_case/X_SRR064438.csv test 1
-python ChimerDriver.py build use_case/X_SRR064439.csv test 1
-python ChimerDriver.py build use_case/X_SRR064440.csv test 1
-python ChimerDriver.py build use_case/X_SRR064441.csv test 1
-python ChimerDriver.py build use_case/X_SRR496597.csv test 1
-python ChimerDriver.py build use_case/X_SRR496595.csv test 1
-python ChimerDriver.py build use_case/X_SRR496481.csv test 1
+python ChimerDriver.py build use_case_breast_prostate/training_set.csv train N
+python ChimerDriver.py build use_case_breast_prostate/X_SRR064286.csv test 1
+python ChimerDriver.py build use_case_breast_prostate/X_SRR064287.csv test 1
+python ChimerDriver.py build use_case_breast_prostate/X_SRR064438.csv test 1
+python ChimerDriver.py build use_case_breast_prostate/X_SRR064439.csv test 1
+python ChimerDriver.py build use_case_breast_prostate/X_SRR064440.csv test 1
+python ChimerDriver.py build use_case_breast_prostate/X_SRR064441.csv test 1
+python ChimerDriver.py build use_case_breast_prostate/X_SRR496597.csv test 1
+python ChimerDriver.py build use_case_breast_prostate/X_SRR496595.csv test 1
+python ChimerDriver.py build use_case_breast_prostate/X_SRR496481.csv test 1
 ```
 ### Cross-validation
 To cross validate the model with 10-fold cross validation on the provided training set the command line takes the following arguments:
