@@ -42,12 +42,15 @@ processed_db.zip:
     cancermine.csv -> database for the roles of genes, either driver, tumor suppressor, oncogenic or other
 ```
 ## Installation
-After successfully creating the working environment unzip the *processed_db.zip* folder. The four pre-processed databases should be in the same directory as the main code and the python module.
-In order to replicate the experiments on the provided dataset the first step is creating the features for the training and test sets as described in the subsection "Build features".
-Next one can either cross-validate the model or test it on the provided testing set as described in the subsections below. 
+After successfully creating the working environment unzip the *processed_db.zip* folder. 
+The four pre-processed databases should be in the same directory as the main code and the python module.
+
+In order to replicate the experiments with the provided dataset the first step is creating the features for the training and test sets as described in the subsection "Build features".
+
+Next, it is possible to either cross-validate the model or test it on the provided testing set as described in the subsections below. 
 
 
-### Build the features
+#### Build the features
 The features for the training set and the test set must be constructed using the following four arguments: 
 - "build"
 - "file.csv"
@@ -72,7 +75,7 @@ python ChimerDriver.py build use_case_breast_prostate/X_SRR496597.csv test 1
 python ChimerDriver.py build use_case_breast_prostate/X_SRR496595.csv test 1
 python ChimerDriver.py build use_case_breast_prostate/X_SRR496481.csv test 1
 ```
-### Cross-validation
+#### Cross-validation
 To cross validate the model with 10-fold cross validation on the provided training set the command line takes the following arguments:
 - "train"
 - "trainset.csv" - separated by "+" in case of multiple training sets
@@ -99,7 +102,7 @@ python ChimerDriver.py train DEEPrior_data/training_set.csv DEEPrior_data/test_s
 ```
 
 
-### Testing
+#### Testing
 The command line arguments are the same used for the training phase with the exception of the first one which will be "test" instead of "train".
 
 Test the model using the prostate and breast samples provided in the *use_cases_brest_prostate* folder. Train the model on training_set.csv, test it on the samples belonging to the SRR***.csv files listed below. No samples provided to validate the model during training therefore the training will stop after 500 epochs. Each subset of feature is considered and the number of features is reduced with the random forest characterized by a threshold of 0.0005. The learning rate is 0.001 and the dropout is 0.2.
