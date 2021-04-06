@@ -90,8 +90,13 @@ To cross validate the model with 10-fold cross validation on the provided traini
 
 Train the model on training_set.csv, validate it using the samples in test_set_1.csv. The maximum possible training epochs is 3000, the model uses the random forest selection method on the complete set of features with a threshold of 0.0005. The learning rate is 0.01 and the dropout is 0.2
 ```
-python ChimerDriver.py train DEEPrior_data/training_set.csv DEEPrior_data/test_set_2_con_non_onco.csv DEEPrior_data/test_set_1.csv 3000 forest all 0.0005 0.01 0.2
+python ChimerDriver.py train DEEPrior_data/training_set.csv DEEPrior_data/test_set_2_con_non_onco.csv DEEPrior_data/test_set_1.csv 3000 forest all_feat 0.0005 0.01 0.2
 ```
+Repeat the previous step using the same features but different parameters, for example a dropout value of 0.4.
+```
+python ChimerDriver.py train DEEPrior_data/training_set.csv DEEPrior_data/test_set_2_con_non_onco.csv DEEPrior_data/test_set_1.csv 3000 load all_feat 0.0005 0.01 0.4
+```
+
 Train the model on training_set.csv, validate it using the samples in test_set_1.csv. The maximum possible training epochs is 1000, the model uses the transcription factor features only. The learning rate is 0.001 and the dropout is 0.1
 ```
 python ChimerDriver.py train DEEPrior_data/training_set.csv DEEPrior_data/test_set_2_con_non_onco.csv DEEPrior_data/test_set_1.csv 1000 subset TF 0.0005 0.001 0.1
