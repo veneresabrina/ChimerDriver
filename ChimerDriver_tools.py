@@ -266,12 +266,10 @@ class initial_features:
     def obtaining_partial_features(self, label, new_filename):
         # There are 3 possible datasets: DeePrior, Pegasus, Oncofuse
         error_message = ('The input file format did not fall into any of the usual cases.\n'
-            'Please enter a file in a .csv format (the fusion_candidates.xlsx) with either one of the following sets of minimum required information separated by a tab:\n\n'
-            '\t1. gene names and labels in 2 columns defined as '
-            '"Gene_name5p", "Gene_name3p"\n\n '
-            '\t2. gene names, labels, breakpoints, chromosomes, genome version in 7 columns defined as '
+            'Please enter a file in a .csv format (or fusion_candidates.xlsx) with either one of the following sets of minimum required information separated by a tab:\n\n'
+            '\t1. gene names, labels, breakpoints, chromosomes, genome version in 7 columns defined as '
             '"5pCommonName", "3pCommonName", "Coord5p", "Coord3p", "Chr5p", "Chr3p", "Version"\n\n'
-            '\t3. gene names, labels, breakpoints, chromosomes, gene start, gene end in 10 columns defined as '
+            '\t2. gene names, labels, breakpoints, chromosomes, gene start, gene end in 10 columns defined as '
             '"Gene_Name1", "Gene_Name2", "Gene_Breakpoint1", "Gene_Breakpoint2", "Chr1", "Chr2", "Gene_Start1", "Gene_End1", "Gene_Start2", "Gene_End2"\n\n'
                  )
         min_pegasus_info = ["Gene_Name1", "Gene_Name2", "Gene_Breakpoint1", "Gene_Breakpoint2", "Chr1", "Chr2", "Gene_Start1", "Gene_End1", "Gene_Start2", "Gene_End2", "Strand1","Strand2"]
