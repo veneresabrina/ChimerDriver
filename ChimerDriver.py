@@ -30,7 +30,7 @@ the two datasets before proceeding onto the training.
 
 For the testing is the following:
 >> python FeatureFusion.py test DEEPrior_data DEEPrior_data/training_set.csv
- DEEPrior_data/test_set_2_con_non_onco.csv DEEPrior_data/test_set_1.csv True subset_forest 5_GO_TF 0.0005 0.01 0.2
+ DEEPrior_data/test_set.csv DEEPrior_data/test_set_1.csv True subset_forest 5_GO_TF 0.0005 0.01 0.2
 """
 from FeatureFusion_tools import *
 from pathlib import Path
@@ -245,40 +245,7 @@ if __name__ == '__main__':
         #######################################
     
         ########### MLP ###############
-#        trset_name = 'X_train.csv'
-#        trset_GO = 'GO_trainset_final.csv'  # 'GO_oncofuse_train_usando_solo_train.csv'
-#        trset_TF = "TF_trset_final.csv"  # 'gene_attribute_matrix_oncofuse_trset.csv'
-#        trset_miRNA = "miRNA_trset_final.csv"  # "gene_miRNA_matrix_oncofuse_trset.csv"
-#        tsset_name = 'X_test2_con_non_onco.csv'
-#        tsset_GO = "GO_testset_final.csv"  # 'GO_oncofuse_testset_usando_solo_train.csv'
-#        tsset_TF = "TF_testset_final.csv"  # 'gene_attribute_matrix_oncofuse_testset.csv'
-#        tsset_miRNA = "miRNA_testset_final.csv"  # "gene_miRNA_matrix_oncofuse_testset.csv"
-#        valset_name = 'X_test.csv'
-#        valset_GO = "GO_valset_final.csv"  # 'GO_oncofuse_testset_usando_solo_train.csv'
-#        valset_TF = "TF_valset_final.csv"  # 'gene_attribute_matrix_oncofuse_testset.csv'
-#        valset_miRNA = "miRNA_valset_final.csv"  # "gene_miRNA_matrix_oncofuse_testset.csv"
-#    
-        #lr = float(sys.argv[5])
-        #drop = float(sys.argv[6])
-#        gammas = [0.001]
-#        g, c = '', ''
-#        for gamma in gammas:
-#            g = g + '_' + str(gamma)
-#        coeffs = [0.1]
-#        for coeff in coeffs:
-#            c = c + '_' + str(coeff)
-#        degrees = [2,3]
-    
-        #list_filenames = [trset_name, trset_GO, trset_TF, trset_miRNA, tsset_name, tsset_GO, tsset_TF, tsset_miRNA, valset_name, valset_GO, valset_TF, valset_miRNA]
-        # CROSS VALIDATION
-    #    SupportVectorMachine = SVM(dataframes=list_filenames, feat_sel=features_selected, gammas=gammas, coeffs=coeffs, degrees=degrees)
-    #    results_svm = SupportVectorMachine.run_model()
-    #    SupportVectorMachine.plot_results()
-    #    results_svm.to_csv('results/cross_validation_SVM_'+user_feat_sel+'_'+feat_set+'_tresh'+str(threshold)+'_lr'+str(lr)+'_drop'+str(drop)+'_gammas'+g+'_coeffs'+c+'.csv', sep='\t')
-    
-
 		
-			#    MultilayerPerceptron = MLP(dataframes=list_filenames, use_validation_set=False, feat_sel=features_selected,learning_rate=lr, training_epochs=30, batch_size=32)  
         MultilayerPerceptron = MLP(folder_name, train_filename_base, test_filename_base, val_filename_base, use_validation_set,feat_sel=features_selected,learning_rate = lr,training_epochs = 5000,batch_size=32)
 
         if action == 'train':
@@ -291,9 +258,9 @@ if __name__ == '__main__':
 		    
 		    # TESTING   
             training_results, X_train, X_test, x_val, _, _, _ = MultilayerPerceptron.train_model(n_nodes=[512,256,128,64], drop= drop) 
-            results, Y_test, y_pred, y_pred_proba = MultilayerPerceptron.test_model([512,256,128,64], drop, ['sigmoid']*4)  # here you can change dropout if you want
+            results, Y_test, y_pred, y_pred_proba = MultilayerPerceptron.test_model([512,256,128,64], drop, ['tanh']*4)  # here you can change dropout if you want
 
-		    #MultilayerPerceptron.plot_results()
+		    
 		                
             num_GO, num_miRNA, num_TF, num_init = 0, 0, 0, 0
             for feat in features_selected:
@@ -308,19 +275,6 @@ if __name__ == '__main__':
                 else:
     	            num_TF+=1
             print('%d feat tot\n%d GO\n%d miRNA\n%d TF\n%d initial features' %(len(features_selected),num_GO,num_miRNA,num_TF,num_init))
-#MultilayerPerceptron.plot_results()
-    #    bool_values_fn = Y_test[[item[0] for item in list(y_pred==0)]]==1
-    #    fn_samples = bool_values_fn[bool_values_fn].index.to_list()
-    #    bool_values_fp = Y_test[[item[0] for item in list(y_pred==1)]]==0
-    #    fp_samples = bool_values_fp[bool_values_fp].index.to_list()
-    #    with open('false_negative_MLP_samples_acc81.txt', 'w') as f:
-    #        for item in fn_samples:
-    #            f.write('\n')
-    #            f.write(item)
-    #        
-    #    with open('false_positive_MLP_samples_acc81.txt', 'w') as f:
-    #        for item in fp_samples:
-    #            f.write('\n')
-    #            f.write(item)
+
 
 
