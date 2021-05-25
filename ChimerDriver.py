@@ -176,15 +176,6 @@ if __name__ == '__main__':
     
         folder_name, train_filename,test_filename,val_filename, use_validation_set, user_feat_sel,feat_set,threshold,lr,drop = sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6],sys.argv[7],sys.argv[8],float(sys.argv[9]),float(sys.argv[10]),float(sys.argv[11])
 
-#        train_filename_base, test_filename_base, val_filename_base = train_filename.split('/')[-1].split('.')[0]+'_', test_filename.split('/')[-1].split('.')[0]+'_', val_filename.split('/')[-1].split('.')[0]+'_'
-        
-        #action,user_feat_sel,feat_set,threshold,lr,drop = 'train','subset', '5', 0.0005, 0.001, 0.2
-        #folder_name, train_filename_structfeat = 'dummy', 'dummy_data_like_DEEPrior_structfeat.csv'
-        #train_filename_base = ('_').join(train_filename_structfeat.split('_')[:-1]) + '_' #'dummy_data_like_DEEPrior_'
-        #test_filename_structfeat = 'dummy_data_like_Pegasus_structfeat.csv'
-        #test_filename_base = ('_').join(test_filename_structfeat.split('_')[:-1]) + '_' #'dummy_data_like_DEEPrior_'
-        #val_filename_base = ''
-        #command_line = [action,user_feat_sel,feat_set,threshold,lr,drop,folder_name,train_filename_base,test_filename_base,val_filename_base]
 
         new_filenames = []        
         for filename in [train_filename,test_filename,val_filename]:
