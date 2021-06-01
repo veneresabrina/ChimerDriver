@@ -4,7 +4,7 @@ A machine learning tool that assesses the oncogenic potential of gene fusions.
 
 Please cite the following paper if this code was useful for your research:
 
-*blabla*
+**
 
 Download from here (PDF): 
 
