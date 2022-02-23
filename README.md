@@ -126,7 +126,7 @@ To load an existing model and use it to test a dataset the following command lin
 -"model_to_load_filename" - the filename of the .h5 file of the model you are testing
 
 ```
-python ChimerDriver.py load_test_model DEEPrior_data DEEPrior_data/test_set.csv  DEEPrior_data/featsel_all.txt  DEEPrior_data/trained_model_lr0.01_nodes_dropout0.2512-256-128-64_actfuncrelu-tanh-relu-tanh.h5
+python ChimerDriver.py load_test_model DEEPrior_data DEEPrior_data/test_set.csv DEEPrior_data/featsel_all.txt DEEPrior_data/trained_model_lr0.01_nodes_dropout0.2512-256-128-64_actfuncrelu-tanh-relu-tanh.h5
 
 ```
 Please note that before testing a new dataset it is needed to perform the "build" step to obtain the required features in the correct format.
