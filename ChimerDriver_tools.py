@@ -312,7 +312,7 @@ class initial_features:
             # the fusion pair in the form Gene1_Gene2
             Fusion_pairs.append(myset.iloc[i][gene_name5p_column_name]+'_'+myset.iloc[i][gene_name3p_column_name])
             # the class/label, either 1 or 0
-            if len(label_column_name)==0: # in Pegasus the information is given by the filename
+            if len(label_column_name)==0 or label==1 or label==0: # in Pegasus the information is given by the filename
                 Labels.append(label)
             elif label_column_name=="NotFound":
                 Labels.append(1) # if the dataset was in the DEEPrior format but "Label" column was not found assign 1
