@@ -273,7 +273,7 @@ class initial_features:
             '"Gene_Name1", "Gene_Name2", "Gene_Breakpoint1", "Gene_Breakpoint2", "Chr1", "Chr2", "Gene_Start1", "Gene_End1", "Gene_Start2", "Gene_End2"\n\n'
                  )
         min_pegasus_info = ["Gene_Name1", "Gene_Name2", "Gene_Breakpoint1", "Gene_Breakpoint2", "Chr1", "Chr2", "Gene_Start1", "Gene_End1", "Gene_Start2", "Gene_End2", "Strand1","Strand2"]
-        min_deeprior_info = ["5pCommonName", "3pCommonName", "Coord5p", "Coord3p", "Chr5p", "Chr3p", "Version","Label"]
+        min_deeprior_info = ["5pCommonName", "3pCommonName", "Coord5p", "Coord3p", "Chr5p", "Chr3p", "Version"] #"Label"
         if 'oncofuse' in self.filename:
             # Do Oncofuse stuff to parse the file
             myset = pd.read_csv(self.filename, sep='\t')
@@ -295,7 +295,10 @@ class initial_features:
                     breakpoint5p_column_name, breakpoint3p_column_name = "Coord5p", "Coord3p"
                     chr5p_column_name, chr3p_column_name = "Chr5p", "Chr3p"
                     version_column_name = "Version"
-                    label_column_name = "Label"                            
+                    if "Label" in myset.columns.to_list():
+                        label_column_name = "Label"
+                    else:
+                        label_column_name = "NotFound"
                 else:
                     print('unable to read set'+error_message)
             except:
@@ -311,6 +314,8 @@ class initial_features:
             # the class/label, either 1 or 0
             if len(label_column_name)==0: # in Pegasus the information is given by the filename
                 Labels.append(label)
+            elif label_column_name=="NotFound":
+                Labels.append(1) # if the dataset was in the DEEPrior format but "Label" column was not found assign 1
             else: # in DEEPrior the information is given as a column
                 Labels.append(myset.iloc[i][label_column_name])
 
@@ -539,7 +544,7 @@ class miRNA_features(Transcription_factors_features):
 
 
 class MLP(DataIntegration):
-    def __init__(self, folder_name, train_filename_base, test_filename_base, val_filename_base, use_validation_set, feat_sel, learning_rate=0.001, training_epochs=300, batch_size=32
+    def __init__(self, folder_name, train_filename_base='.', test_filename_base='.', val_filename_base='.', use_validation_set='.', feat_sel='all', learning_rate=0.001, training_epochs=300, batch_size=32
                  ):
         self.use_validation_set = use_validation_set
 #        if use_validation_set=='True':
@@ -749,29 +754,43 @@ class MLP(DataIntegration):
                 self.y_pred_proba.to_csv(self.folder_name + '/Y_prob_MLP__use_val_'+str(self.use_validation_set)+'_lr'+str(self.learning_rate)+'_drop'+str(drop)+str(l1)+str(l2)+str(l3)+str(l4)+str(a1)+str(a2)+str(a3)+str(a4)+'.csv', sep='\t')
         return self.results, self.X_train, self.X_test, self.x_val, self.Y_test, self.y_pred, self.y_pred_proba
         
-    def test_model(self, n_nodes, drop, act_functs):
-        l1,l2,l3,l4 = n_nodes
-        a1,a2,a3,a4 = act_functs
-        model = load_model(self.model_filename+'_dropout'+str(drop)+str(l1)+'-'+str(l2)+'-'+str(l3)+'-'+str(l4)+'_actfunc'+str(a1)+'-'+str(a2)+'-'+str(a3)+'-'+str(a4)+'.h5')
-
+    def test_model(self, model_to_load_filename): #n_nodes, drop, act_functs):
+        #l1,l2,l3,l4 = n_nodes
+        #a1,a2,a3,a4 = act_functs        
+        #model = load_model(self.model_filename+'_dropout'+str(drop)+str(l1)+'-'+str(l2)+'-'+str(l3)+'-'+str(l4)+'_actfunc'+str(a1)+'-'+str(a2)+'-'+str(a3)+'-'+str(a4)+'.h5')
+        
+        self.train_test_set()
+        model = load_model(model_to_load_filename)
+        
+        testdata = DataIntegration(self.tsset_name, self.tsset_GO, self.tsset_TF, self.tsset_miRNA)        
+        self.X_test, self.Y_test = testdata.read_data()
+        self.X_test = self.X_test[self.selected_features]
+        
         self.y_pred = model.predict_classes(self.X_test)
         self.y_pred_proba = model.predict_proba(self.X_test)
-        print(self.y_pred_proba)
+        for i in range(len(X_test)):
+            string_to_print = self.X_test['FusionPair'].iloc[i] + ' probability of oncogenity: '+ self.y_pred_proba['probonco'].iloc[i]
+            print(string_to_print)
         try:
             AUC_score =  [metrics.roc_auc_score(self.Y_test, self.y_pred)]
         except:
             AUC_score = []
         results = {'learning rate': [self.learning_rate], 
-                   'model name': [self.model_filename+'_dropout'+str(drop)+str(l1)+'-'+str(l2)+'-'+str(l3)+'-'+str(l4)+'_actfunc'+str(a1)+'-'+str(a2)+'-'+str(a3)+'-'+str(a4)+'.h5'],
+                   'model name': [model_to_load_filename],
                    'confusion matrix': [metrics.confusion_matrix(self.Y_test, self.y_pred)],
                    'accuracy': [metrics.accuracy_score(self.Y_test, self.y_pred)],
                    'precision': [metrics.precision_score(self.Y_test, self.y_pred)],
                    'recall': [metrics.recall_score(self.Y_test, self.y_pred)],
                    'f1 score': [metrics.f1_score(self.Y_test, self.y_pred)], 
                    'AUC score': AUC_score}
-        print('testing results on model ' + self.model_filename+'_dropout'+str(drop)+str(l1)+'-'+str(l2)+'-'+str(l3)+'-'+str(l4)+'_actfunc'+str(a1)+'-'+str(a2)+'-'+str(a3)+'-'+str(a4)+'.h5'
-+' :\n')
-        print(results)
+        #print('testing results on model ' + model_to_load_filename +' :\n')
+        #print(results)
+        pd.DataFrame(data=self.results).to_csv(self.folder_name + '/testing_MLP_Results_use_val_'+str(self.use_validation_set)+'_lr'+str(self.learning_rate)+'_drop'+str(drop)+str(l1)+str(l2)+str(l3)+str(l4)+str(a1)+str(a2)+str(a3)+str(a4)+'.csv', sep='\t')
+        pd.DataFrame(self.X_test,columns=['X_test']).to_csv(self.folder_name + '/X_test_MLP_'+model_to_load_filename.split('/')[-1].split('.')[0]+'.csv', sep='\t')
+        pd.DataFrame(self.Y_test.to_numpy(),columns=['Y_test']).to_csv(self.folder_name + '/Y_test_MLP_'+model_to_load_filename.split('/')[-1].split('.')[0]+'.csv', sep='\t')
+        pd.DataFrame(self.y_pred,columns=['y_pred']).to_csv(self.folder_name + '/Y_pred_MLP_'+model_to_load_filename.split('/')[-1].split('.')[0]+'.csv', sep='\t')
+        self.y_pred_proba.to_csv(self.folder_name + '/Y_prob_MLP_'+model_to_load_filename.split('/')[-1].split('.')[0]+'.csv', sep='\t')
+        
         return results, self.Y_test, self.y_pred, self.y_pred_proba
 
     def plot_results(self):
@@ -788,139 +807,4 @@ class MLP(DataIntegration):
                    [','.join([str(item[4]), str(item[5]), str(item[6]), str(item[7])]) for item in self.results.values
                     if item[0] == 'train'], rotation=-30)
         plt.savefig(f'MLP_performances on {self.model_filename}_dropout{str(drop)}{l1}-{l2}-{l3}-{l4}_actfunc{a1}-{a2}-{a3}-{a4}.png')
-
-
-#
-#class SVM(DataIntegration):
-#    def __init__(self, dataframes, feat_sel, gammas, coeffs, degrees ):
-#        self.selected_features = feat_sel
-#        self.trset_name = dataframes[0]
-#        self.trset_GO = dataframes[1]
-#        self.trset_TF = dataframes[2]
-#        self.trset_miRNA = dataframes[3]
-#        self.tsset_name = dataframes[4]
-#        self.tsset_GO = dataframes[5]
-#        self.tsset_TF = dataframes[6]
-#        self.tsset_miRNA = dataframes[7]
-#        self.cont = 0
-#        self.gammas = gammas
-#        self.coeff = coeffs
-#        self.degrees = degrees
-#        self.df = pd.DataFrame(
-#            columns=['train/test', 'cross_val recall', 'cross_val accuracy', 'cross_val precision', 'cross_val f1',
-#                     'cross_val auc', 'kernel', 'degree', 'gamma', 'lambda', 'confmat', 'accuracy', 'precision',
-#                     'recall',
-#                     'AUC'])
-#    def run_model(self):
-#        trdata = DataDefinition(trset_name, trset_GO, trset_TF, trset_miRNA)
-#        testdata = DataDefinition(tsset_name, tsset_GO, tsset_TF, tsset_miRNA)
-#        self.X_train, self.Y_train = trdata.read_data()
-#        self.x_test, self.y_test = testdata.read_data()
-#        self.X_train, self.x_test = self.X_train[features_selected], self.x_test[features_selected]
-#        self.df = self.run_linear_kernel(self.X_train, self.Y_train, self.x_test, self.y_test)
-#        self.df = self.run_rbf_sigm_kernel(self.X_train, self.Y_train, self.x_test, self.y_test)
-#        self.df = self.run_poly_kernel(self.X_train, self.Y_train, self.x_test, self.y_test)
-#        return self.df
-#
-#    def run_linear_kernel(self,X_train,Y_train, x_test, y_test):
-#        kernel = 'linear'
-#        for C in self.coeff:
-#            clf = svm.SVC(kernel=kernel,C=C)
-#            clf.fit(X_train,Y_train)
-#            score = cross_validate(clf, X_train, Y_train, cv=10, scoring=["recall", "accuracy", "f1", "precision", "roc_auc"])
-#            Y_pred = clf.predict(X_train)
-#            y_pred = clf.predict(x_test)
-#            print("Accuracy train linear:",metrics.accuracy_score(self.Y_train, Y_pred)," coeff: ", C)
-#            print("Accuracy test linear :",metrics.accuracy_score(self.y_test, y_pred)," coeff: ", C)
-#            self.df.loc[self.cont] = ['train', [np.mean(score['test_recall']), np.std(score['test_recall'])],
-#                                      [np.mean(score['test_accuracy']), np.std(score['test_accuracy'])],
-#                                      [np.mean(score['test_precision']), np.std(score['test_precision'])],
-#                                      [np.mean(score['test_f1']), np.std(score['test_f1'])],
-#                                      [np.mean(score['test_roc_auc']), np.std(score['test_roc_auc'])], kernel, '', '',
-#                                      C,
-#                                      metrics.confusion_matrix(Y_train, Y_pred),
-#                                      metrics.accuracy_score(Y_train, Y_pred),
-#                                      metrics.precision_score(Y_train, Y_pred),
-#                                      metrics.recall_score(Y_train, Y_pred),
-#                                      metrics.roc_auc_score(Y_train, Y_pred)]
-#            self.df.loc[self.cont + 1] = ['test', '', '', '', '', '', kernel, '', '', C,
-#                                          metrics.confusion_matrix(y_test, y_pred),
-#                                          metrics.accuracy_score(y_test, y_pred),
-#                                          metrics.precision_score(y_test, y_pred),
-#                                          metrics.recall_score(y_test, y_pred),
-#                                          metrics.roc_auc_score(y_test, y_pred)]
-#            self.cont += 2
-#        return self.df
-#
-#    def run_rbf_sigm_kernel(self,X_train,Y_train, x_test, y_test):
-#        kernels = ['rbf','sigmoid']
-#        for kernel in kernels:
-#            for gamma in self.gammas:
-#                for C in self.coeff:
-#                    clf = svm.SVC(kernel=kernel, gamma=gamma, C=C)
-#                    clf.fit(X_train, Y_train)
-#                    score = cross_validate(clf, X_train, Y_train, cv=10,
-#                                           scoring=["recall", "accuracy", "f1", "precision", "roc_auc"])
-#                    Y_pred = clf.predict(X_train)
-#                    y_pred = clf.predict(x_test)
-#                    print("Accuracy train:", metrics.accuracy_score(Y_train, Y_pred), ", kernel: ", kernel, ", gamma: ",
-#                          gamma, ", coeff: ", C)
-#                    print("Accuracy test:", metrics.accuracy_score(y_test, y_pred), ", kernel: ", kernel, ", gamma: ",
-#                          gamma, ", coeff: ", C)
-#                    self.df.loc[self.cont] = ['train', [np.mean(score['test_recall']), np.std(score['test_recall'])],
-#                                    [np.mean(score['test_accuracy']), np.std(score['test_accuracy'])],
-#                                    [np.mean(score['test_precision']), np.std(score['test_precision'])],
-#                                    [np.mean(score['test_f1']), np.std(score['test_f1'])],
-#                                    [np.mean(score['test_roc_auc']), np.std(score['test_roc_auc'])], kernel, '', gamma, C,
-#                                    metrics.confusion_matrix(Y_train, Y_pred),
-#                                    metrics.accuracy_score(Y_train, Y_pred), metrics.precision_score(Y_train, Y_pred),
-#                                    metrics.recall_score(Y_train, Y_pred), metrics.roc_auc_score(Y_train, Y_pred)]
-#                    self.df.loc[self.cont + 1] = ['test', '', '', '', '', '', kernel, '', gamma, C,
-#                                        metrics.confusion_matrix(y_test, y_pred),
-#                                        metrics.accuracy_score(y_test, y_pred), metrics.precision_score(y_test, y_pred),
-#                                        metrics.recall_score(y_test, y_pred), metrics.roc_auc_score(y_test, y_pred)]
-#                    self.cont += 2
-#        return self.df
-#    def run_poly_kernel(self,X_train,Y_train, x_test, y_test):
-#        kernel = 'poly'
-#        for gamma in self.gammas:
-#           for degree in self.degrees:
-#               for C in self.coeff:
-#                   clf = svm.SVC(kernel=kernel,gamma=gamma,degree=degree,C=C)
-#                   clf.fit(X_train,Y_train)
-#                   score = cross_validate(clf, X_train, Y_train, cv=10,
-#                                          scoring=["recall", "accuracy", "f1", "precision", "roc_auc"])
-#                   Y_pred = clf.predict(X_train)
-#                   y_pred = clf.predict(x_test)
-#                   print("Accuracy train:",metrics.accuracy_score(Y_train, Y_pred), ", kernel: poly",", degree: ",degree, ", gamma: ", gamma, ", coeff: ", C)
-#                   print("Accuracy test:",metrics.accuracy_score(y_test, y_pred), ", kernel: poly",", degree: ",degree, ", gamma: ", gamma, ", coeff: ", C)
-#                   self.df.loc[self.cont] = ['train', [np.mean(score['test_recall']), np.std(score['test_recall'])],
-#                                             [np.mean(score['test_accuracy']), np.std(score['test_accuracy'])],
-#                                             [np.mean(score['test_precision']), np.std(score['test_precision'])],
-#                                             [np.mean(score['test_f1']), np.std(score['test_f1'])],
-#                                             [np.mean(score['test_roc_auc']), np.std(score['test_roc_auc'])], kernel,
-#                                             degree, gamma, C,
-#                                             metrics.confusion_matrix(Y_train, Y_pred),
-#                                             metrics.accuracy_score(Y_train, Y_pred),
-#                                             metrics.precision_score(Y_train, Y_pred),
-#                                             metrics.recall_score(Y_train, Y_pred),
-#                                             metrics.roc_auc_score(Y_train, Y_pred)]
-#                   self.df.loc[self.cont + 1] = ['test', '', '', '', '', '', kernel, degree, gamma, C,
-#                                                 metrics.confusion_matrix(y_test, y_pred),
-#                                                 metrics.accuracy_score(y_test, y_pred),
-#                                                 metrics.precision_score(y_test, y_pred),
-#                                                 metrics.recall_score(y_test, y_pred),
-#                                                 metrics.roc_auc_score(y_test, y_pred)]
-#                   self.cont += 2
-#        return self.df
-#    def plot_results(self):
-#        plt.plot([item[-1] for item in self.df.values if item[0] == 'train'], label='train_AUC')
-#        plt.plot([item[-1] for item in self.df.values if item[0] == 'test'], label='test_AUC')
-#        plt.title('SVM AUC for different model parameters with the gaussian kernel')
-#        plt.legend()
-#        plt.ylim(0.5, 1)
-#        plt.xticks(np.arange(len(self.df) / 2),
-#                   [','.join([str(item[2]), str(item[4]), str(item[5])]) for item in self.df.values if item[0] == 'train'],
-#                   rotation=-30)
-
 
