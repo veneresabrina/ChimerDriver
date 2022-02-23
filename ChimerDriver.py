@@ -172,7 +172,7 @@ if __name__ == '__main__':
 
 
     
-    elif action == 'train' or action == 'test':
+    elif action == 'cross_val_model' or action == 'train_test_model':
     
         folder_name, train_filename,test_filename,val_filename, use_validation_set, user_feat_sel,feat_set,threshold,lr,drop = sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6],sys.argv[7],sys.argv[8],float(sys.argv[9]),float(sys.argv[10]),float(sys.argv[11])
 
@@ -199,7 +199,7 @@ if __name__ == '__main__':
         if user_feat_sel == 'forest':
             # select now :
             FeatSel = FeatureSelection(filename_out=folder_name + '/' + 'feat_sel'+feat_set+'.txt')
-            features_selected = FeatSel.Select_with_trees(filename1= folder_name + '/' + train_filename_base+'structfeat.csv',
+            features_selected = FeatSel.Select_with_trees(filename1=folder_name + '/' + train_filename_base+'structfeat.csv',
                                                           filename2=folder_name + '/' + train_filename_base+'GO.csv',
                                                           filename3=folder_name + '/' + train_filename_base+'TF.csv',
                                                           filename4=folder_name + '/' + train_filename_base+'miRNA.csv',
@@ -234,22 +234,22 @@ if __name__ == '__main__':
     
     
         #######################################
-    
+
         ########### MLP ###############
 		
         MultilayerPerceptron = MLP(folder_name, train_filename_base, test_filename_base, val_filename_base, use_validation_set,feat_sel=features_selected,learning_rate = lr,training_epochs = 5000,batch_size=32)
 
-        if action == 'train':
+        if action == 'cross_val_model':
             print('now performing cross validation on 10 folds with nodes: 512,256,128,64 and activation functions: 4 sigmoids')
             cross_val_results, mean_acc, std_acc = MultilayerPerceptron.kfold_cross_validation(n_nodes=[512,256,128,64], act_functs=['sigmoid']*4, k=10, drop = drop)
             print('cross validation on 10 folds:\nmean of accuracy: %.3f,\nstd of accuracy = %.3f' %(mean_acc, std_acc))
             cross_val_results.to_csv(folder_name + '/cross_validation_MLP_'+user_feat_sel+'_'+feat_set+'_tresh'+str(threshold)+'_lr'+str(lr)+'_drop'+str(drop)+'.csv', sep='\t')
 
-        elif action == 'test':
+        elif action == 'train_test_model':
 		    
-		    # TESTING   
+		    # TRAINING & TESTING   
             training_results, X_train, X_test, x_val, _, _, _ = MultilayerPerceptron.train_model(n_nodes=[512,256,128,64], drop= drop) 
-            results, Y_test, y_pred, y_pred_proba = MultilayerPerceptron.test_model([512,256,128,64], drop, ['tanh']*4)  # here you can change dropout if you want
+            #results, Y_test, y_pred, y_pred_proba = MultilayerPerceptron.test_model([512,256,128,64], drop, ['tanh']*4)  # here you can change dropout if you want
 
 		    
 		                
@@ -266,6 +266,19 @@ if __name__ == '__main__':
                 else:
     	            num_TF+=1
             print('%d feat tot\n%d GO\n%d miRNA\n%d TF\n%d initial features' %(len(features_selected),num_GO,num_miRNA,num_TF,num_init))
+	   
 
-
-
+        elif action == 'load_test_model':
+	    
+		    
+	# LOADING & TESTING   
+            folder_name, test_filename, feature_selected_to_load_filename, model_to_load_filename = sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5]
+	    features_selected = []
+            with open(feature_selected_to_load_filename,"r") as f:
+                for row in f:
+                    features_selected.append(row.split("\n")[0])
+	    MultilayerPerceptron_load = MLP(folder_name, test_filename.split('/')[-1].split('.')[0], feat_sel=features_selected)
+	    
+	    results, Y_test, y_pred, y_pred_proba = MultilayerPerceptron_load.test_model(model_to_load_filename)  # here you can change dropout if you want
+	 
+    
