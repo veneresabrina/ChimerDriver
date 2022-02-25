@@ -1,5 +1,20 @@
 # ChimerDriver
 A machine learning tool that assesses the oncogenic potential of gene fusions.
+
+conda create --name ChiTest python=3.6.12
+conda activate Chitest
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+
+git clone https://github.com/veneresabrina/ChimerDriver.git
+cd ChimerDriver
+unzip processed_db.zip
+
+
+python ChimerDriver.py build train_test_sets train_test_sets/mytest.csv test N
+python ChimerDriver.py load_test_model train_test_sets train_test_sets/mytest.csv train_test_sets/feat_selall.txt best_model.h5
+
+
 ## Citation
 
 Please cite the following paper if this code was useful for your research:
