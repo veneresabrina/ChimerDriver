@@ -4,11 +4,29 @@ The main contribution consists in the introduction of global information (miRNAs
 
 ## In the following, you will find:
 
-1) *Getting Started*: obtain a working copy of ChimerDriver
-2) *Usage*: how to use ChimerDriver with examples
-3) *Authors' credit*: people contributing to the project
+0) **Citation**
+1) **Getting Started**: obtain a working copy of ChimerDriver
+2) **Usage**: how to use ChimerDriver with examples
+3) **Authors' credit**: people contributing to the project
+4) **Additional options**: NOT required for running the tool
 
 
+# 0. Citation
+
+Please cite the following paper if this code was useful for your research:
+
+Download from here (PDF): 
+
+```
+@article{,
+    author =       "",
+    title =        "{}",
+    booktitle =    "{},
+    pages =        "",
+    year =         "",
+}
+
+```
 
 # 1. Getting Started
 
@@ -60,7 +78,9 @@ It is done. You are now ready to use ChimerDriver!
 
 
 # 2. Usage
-Once installed, ChimerDriver usage is really simple. First, you need to activate the environment. Then you need to make your own dataset in a suitable format for the tool, using the **build** option. In the end, you can call the **load_test_model** option to get the oncogenic predictions for your gene fusions.
+Once installed, ChimerDriver usage is really simple. 
+
+First, you need to activate the environment. Then you need to make your own dataset in a suitable format for the tool, using the **build** option. In the end, you can call the **load_test_model** option to get the oncogenic predictions for your gene fusions.
 
 ```mermaid
 graph LR
@@ -70,38 +90,34 @@ B --> C(get the oncogenic predictions)
 
 > Before running **load_test_model**, you must call the **build** option on your dataset.
 
-## Citation
+## 2.0 Prepare your data
+TO BE FILLED
 
-Please cite the following paper if this code was useful for your research:
-
-
-
-Download from here (PDF): 
-
+## 2.1 Activating the environment
 ```
-@article{,
-    author =       "",
-    title =        "{}",
-    booktitle =    "{},
-    pages =        "",
-    year =         "",
-}
+conda activate ChimerDriver # command to activate virtual environment if you followed our installation guide
+```
 
+## 2.2. Build your own dataset
 ```
-## Prerequisites
-The code is tested under Python 3.6.12 with TensorFlow (GPU) 2.2.0 and Keras 2.4.3. backend, Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz
-The environment can be created with conda by entering the following commands:
+python ChimerDriver.py build train_test_sets train_test_sets/mytest.csv test N
 ```
-conda create --name ChimerDriver python=3.6.12 
-conda activate ChimerDriver
-conda install -c conda-forge pandas=1.1.5
-conda install -c conda-forge scikit-learn=0.23.2
-conda install -c conda-forge keras=2.4.3
-conda install -c conda-forge matplotlib=3.3.2
-```
-The above requirements are also listed in the requirements.txt files.
 
-## Directory structure and files
+## 2.3. Get the oncogenic predictions
+```
+python ChimerDriver.py load_test_model train_test_sets train_test_sets/mytest.csv train_test_sets/feat_selall.txt best_model.h5
+```
+
+# 3. Authors' credit
+
+* **Marta Lovino** - contact marta.lovino@unimore.it
+* **Venere Sabrina Barrese** 
+* **Marilisa Montemurro** 
+* **Elisa Ficarra** - contact elisa.ficarra@unimore.it
+
+# 4. Additional options
+
+## 4.1 Directory structure and files
 ```
 ChimerDriver.py -> main code
 ChimerDriver_tools.py -> python module containing all the necessary functions to run the main code
@@ -111,16 +127,8 @@ processed_db.zip:
     miRNA_gene_matrix.csv -> database containing the microRNA probabilities for each gene
     cancermine.csv -> database for the roles of genes, either driver, tumor suppressor, oncogenic or other
 ```
-## Installation
-After successfully creating the working environment unzip the *processed_db.zip* folder. 
-The four pre-processed databases should be in the same directory as the main code and the python module.
 
-In order to replicate the experiments with the provided dataset the first step is creating the features for the training and test sets as described in the subsection "Build features".
-
-Next, it is possible to either cross-validate the model or test it on the provided testing set as described in the subsections below. 
-
-
-#### Build the features
+## 4.2 Build the features
 The features for the training set and the test set must be constructed using the following four arguments: 
 - "build"
 - "file.csv"
@@ -145,7 +153,7 @@ python ChimerDriver.py build use_case_breast_prostate/X_SRR496597.csv test 1
 python ChimerDriver.py build use_case_breast_prostate/X_SRR496595.csv test 1
 python ChimerDriver.py build use_case_breast_prostate/X_SRR496481.csv test 1
 ```
-#### Cross-validation
+## 4.3 Cross-validation
 To cross validate the model with 10-fold cross validation on the provided training set the command line takes the following arguments:
 - "cross_val_model"
 - "working_folder_name"
@@ -178,7 +186,7 @@ python ChimerDriver.py cross_val_model DEEPrior_data DEEPrior_data/training_set.
 ```
 
 
-#### Training and Testing
+## 4.4 Training and Testing
 The command line arguments are the same used for the training phase with the exception of the first one which will be "train_test_model" instead of "cross_val_model".
 
 Test the model using the prostate and breast samples provided in the *use_cases_brest_prostate* folder. Train the model on training_set.csv, test it on the samples belonging to the SRR***.csv files listed below. No samples provided to validate the model during training therefore the training will stop after 500 epochs. Each subset of feature is considered and the number of features is reduced with the random forest characterized by a threshold of 0.0005. The learning rate is 0.001 and the dropout is 0.2.
@@ -187,7 +195,7 @@ python ChimerDriver.py train_test_model use_cases_breast_prostate use_cases_brea
 ```
 
 
-#### Load and Test
+## 4.5 Load and Test
 To load an existing model and use it to test a dataset the following command line arguments are needed:
 -"load_test_model"
 -"working_folder_name" - the name of the folder you are working in, this is where the dataset is and the results will be saved in
@@ -200,4 +208,8 @@ python ChimerDriver.py load_test_model DEEPrior_data DEEPrior_data/test_set.csv 
 
 ```
 Please note that before testing a new dataset it is needed to perform the "build" step to obtain the required features in the correct format.
+
+# License
+
+This project is licensed under the AGPL v3 License - see the [LICENSE.rst](LICENSE.rst) file for details
 
