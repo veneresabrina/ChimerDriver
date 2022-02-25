@@ -59,14 +59,16 @@ If everything worked correctly, you would find the _ChimerDriver_results.csv_ fi
 It is done. You are now ready to use ChimerDriver!
 
 
+# 2. Usage
+Once installed, ChimerDriver usage is really simple. First, you need to activate the environment. Then you need to make your own dataset in a suitable format for the tool, using the **build** option. In the end, you can call the **load_test_model** option to get the oncogenic predictions for your gene fusions.
 
 ```mermaid
 graph LR
-A(activate environment) --> B(build test set)
-B --> C(get oncogenic predictions)
-
+A(activate environment) --> B(build your own dataset)
+B --> C(get the oncogenic predictions)
 ```
 
+> Before running **load_test_model**, you must call the **build** option on your dataset.
 
 ## Citation
 
