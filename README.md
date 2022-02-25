@@ -14,6 +14,13 @@ unzip processed_db.zip
 python ChimerDriver.py build train_test_sets train_test_sets/mytest.csv test N
 python ChimerDriver.py load_test_model train_test_sets train_test_sets/mytest.csv train_test_sets/feat_selall.txt best_model.h5
 
+```mermaid
+graph LR
+A(activate environment) --> B(build test set)
+B --> C(get oncogenic predictions)
+
+```
+
 
 ## Citation
 
