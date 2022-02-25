@@ -793,6 +793,48 @@ class MLP(DataIntegration):
         
         return results, self.Y_test, self.y_pred, self.y_pred_proba
 
+    def inference(self, model_to_load_filename):  # n_nodes, drop, act_functs):
+        model = load_model(model_to_load_filename)
+
+        testdata = DataIntegration(self.trset_name, self.trset_GO, self.trset_TF, self.trset_miRNA)
+        self.X_test, self.Y_test = testdata.read_data()
+        self.X_test = self.X_test[self.selected_features]
+
+        self.y_pred = model.predict_classes(self.X_test)
+        self.y_pred_proba = model.predict_proba(self.X_test)
+
+        try:
+            AUC_score = [metrics.roc_auc_score(self.Y_test, self.y_pred)]
+        except:
+            AUC_score = []
+        results = {'learning rate': [self.learning_rate],
+                   'model name': [model_to_load_filename],
+                   'confusion matrix': [metrics.confusion_matrix(self.Y_test, self.y_pred)],
+                   'accuracy': [metrics.accuracy_score(self.Y_test, self.y_pred)],
+                   'precision': [metrics.precision_score(self.Y_test, self.y_pred)],
+                   'recall': [metrics.recall_score(self.Y_test, self.y_pred)],
+                   'f1 score': [metrics.f1_score(self.Y_test, self.y_pred)],
+                   'AUC score': AUC_score}
+        # print('testing results on model ' + model_to_load_filename +' :\n')
+        # print(results)
+
+
+
+        # pd.DataFrame(data=self.results).to_csv(
+        #     self.folder_name + '/testing_MLP_Results_use_val_' + str(self.use_validation_set) + '_lr' + str(
+        #         self.learning_rate) + '_drop' + str(drop) + str(l1) + str(l2) + str(l3) + str(l4) + str(a1) + str(
+        #         a2) + str(a3) + str(a4) + '.csv', sep='\t')
+        # pd.DataFrame(self.X_test, columns=['X_test']).to_csv(
+        #     self.folder_name + '/X_test_MLP_' + model_to_load_filename.split('/')[-1].split('.')[0] + '.csv', sep='\t')
+        # pd.DataFrame(self.Y_test.to_numpy(), columns=['Y_test']).to_csv(
+        #     self.folder_name + '/Y_test_MLP_' + model_to_load_filename.split('/')[-1].split('.')[0] + '.csv', sep='\t')
+        # pd.DataFrame(self.y_pred, columns=['y_pred']).to_csv(
+        #     self.folder_name + '/Y_pred_MLP_' + model_to_load_filename.split('/')[-1].split('.')[0] + '.csv', sep='\t')
+        # self.y_pred_proba.to_csv(
+        #     self.folder_name + '/Y_prob_MLP_' + model_to_load_filename.split('/')[-1].split('.')[0] + '.csv', sep='\t')
+
+        return results, self.X_test, self.y_pred, self.y_pred_proba
+
     def plot_results(self):
   
         print('AUC values:')

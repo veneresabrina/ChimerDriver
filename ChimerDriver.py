@@ -32,7 +32,11 @@ For the testing is the following:
 >> python FeatureFusion.py test DEEPrior_data DEEPrior_data/training_set.csv
  DEEPrior_data/test_set.csv DEEPrior_data/test_set_1.csv True subset_forest 5_GO_TF 0.0005 0.01 0.2
 """
-from FeatureFusion_tools import *
+import os.path
+
+import pandas as pd
+
+from ChimerDriver_tools import *
 from pathlib import Path
 import sys
 
@@ -236,7 +240,7 @@ if __name__ == '__main__':
         #######################################
 
         ########### MLP ###############
-		
+
         MultilayerPerceptron = MLP(folder_name, train_filename_base, test_filename_base, val_filename_base, use_validation_set,feat_sel=features_selected,learning_rate = lr,training_epochs = 5000,batch_size=32)
 
         if action == 'cross_val_model':
@@ -246,39 +250,47 @@ if __name__ == '__main__':
             cross_val_results.to_csv(folder_name + '/cross_validation_MLP_'+user_feat_sel+'_'+feat_set+'_tresh'+str(threshold)+'_lr'+str(lr)+'_drop'+str(drop)+'.csv', sep='\t')
 
         elif action == 'train_test_model':
-		    
-		    # TRAINING & TESTING   
+            # TRAINING & TESTING
             training_results, X_train, X_test, x_val, _, _, _ = MultilayerPerceptron.train_model(n_nodes=[512,256,128,64], drop= drop) 
             #results, Y_test, y_pred, y_pred_proba = MultilayerPerceptron.test_model([512,256,128,64], drop, ['tanh']*4)  # here you can change dropout if you want
 
-		    
-		                
             num_GO, num_miRNA, num_TF, num_init = 0, 0, 0, 0
             for feat in features_selected:
                 if 'GO:' in feat:
-	                num_GO+=1
+                    num_GO+=1
                 elif'miR-' in feat:
-	                num_miRNA+=1
+                    num_miRNA+=1
                 elif 'let-' in feat:
-    	            num_miRNA+=1
-                elif 'perc' in feat or 'same_strand' in feat or 'role' in feat:
-    	            num_init+=1
-                else:
-    	            num_TF+=1
-            print('%d feat tot\n%d GO\n%d miRNA\n%d TF\n%d initial features' %(len(features_selected),num_GO,num_miRNA,num_TF,num_init))
-	   
+                    num_miRNA+=1
 
-        elif action == 'load_test_model':
-	    
-		    
-	# LOADING & TESTING   
-            folder_name, test_filename, feature_selected_to_load_filename, model_to_load_filename = sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5]
-	    features_selected = []
-            with open(feature_selected_to_load_filename,"r") as f:
-                for row in f:
-                    features_selected.append(row.split("\n")[0])
-	    MultilayerPerceptron_load = MLP(folder_name, test_filename.split('/')[-1].split('.')[0], feat_sel=features_selected)
-	    
-	    results, Y_test, y_pred, y_pred_proba = MultilayerPerceptron_load.test_model(model_to_load_filename)  # here you can change dropout if you want
-	 
-    
+                elif 'perc' in feat or 'same_strand' in feat or 'role' in feat:
+                    num_init+=1
+                else:
+                    num_TF+=1
+            print('%d feat tot\n%d GO\n%d miRNA\n%d TF\n%d initial features' %(len(features_selected),num_GO,num_miRNA,num_TF,num_init))
+
+    elif action == 'load_test_model':
+
+        # LOADING & TESTING
+        folder_name, test_filename, feature_selected_to_load_filename, model_to_load_filename = sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5]
+        features_selected = []
+        with open(feature_selected_to_load_filename,"r") as f:
+            for row in f:
+                features_selected.append(row.split("\n")[0])
+        MultilayerPerceptron_load = MLP(folder_name, test_filename.split('/')[-1].split('.')[0] + '_', feat_sel=features_selected)
+
+        print('Prediction in progress, please wait...')
+        results, X_test, y_pred, y_pred_proba = MultilayerPerceptron_load.inference(model_to_load_filename)  # here you can change dropout if you want
+
+        # adding predictions to the original file
+        file_to_be_read = os.path.join(folder_name, test_filename.split('/')[-1].split('.')[0]) + '_structfeat.csv'
+        final_output = pd.read_csv(file_to_be_read, sep='\t')
+        # col = ['FusionPair','Version','Chr5p','Coord5p','5pStrand','5pCommonName','Chr3p','Coord3p','3pStrand','3pCommonName']
+        # final_output = original[col]
+        final_output['Class Prediction'] = [int(x) for x in list(y_pred)]
+        final_output['Probability Prediction'] = [float(x) for x in list(y_pred_proba)]
+
+        # save results to file!
+        final_output.to_csv(os.path.join(folder_name, 'ChimerDriverPredictions.csv'), sep='\t')
+        print('\n\nResults successfully saved at ' + os.path.join(folder_name, 'ChimerDriverPredictions.csv'))
+
