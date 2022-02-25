@@ -1,18 +1,64 @@
 # ChimerDriver
-A machine learning tool that assesses the oncogenic potential of gene fusions.
+**ChimerDriver** is an automatic tool based on a Multi-Layer-Perceptron (MLP) to assesses the oncogenic potential of gene fusions.
+The main contribution consists in the introduction of global information (miRNAs, transcription factors - TF, gene ontologies - GO) to improve the oncogenic prediction task.
 
-conda create --name ChiTest python=3.6.12
-conda activate Chitest
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+## In the following, you will find:
 
+1) *Getting Started*: obtain a working copy of ChimerDriver
+2) *Usage*: how to use ChimerDriver with examples
+3) *Authors' credit*: people contributing to the project
+
+
+
+# 1. Getting Started
+
+ChimerDriver is developed in Python 3.6.12 with minimal libraries required. To run ChimerDriver, we strongly suggest you create a clean virtual environment to avoid conflicts with other projects. If you are an expert with virtual environments, all you need is to install the libraries listed in the requirements files, clone this repository, and jump directly to **Test if everything is ok**. Otherwise, no problem, follow the **Installing** section. The installation is very simple!
+
+## 1.1 Prerequisites
+
+- pandas=1.1.5
+- scikit-learn=0.23.2
+- keras=2.4.3
+- matplotlib=3.3.2
+- tensorflow=2.2.0
+
+The complete list of prerequisites is listed in the **requirements.txt** file. 
+
+## 1.2 Installing
+
+First of all, check if you have pip and conda installed in your system. If pip and/or conda are not installed in your system, follow the instructions to install miniconda [here] https://docs.conda.io/en/latest/miniconda.html#installing. If the conda base environment is not yet activated, run this command:
+```
+conda activate
+```
+Now copy and paste these instructions to create and activate a DEEPrior virtual environment called *DEEPenv* with conda:
+
+```
+conda create --name ChimerDriver python=3.6.12  #create a new virtual environment with a selected version of python
+conda activate ChimerDriver
+```
+Then **clone this repository**, unzip _processed_db.zip_ file and install all the required packages listed in the _requirements.txt_ file.  
+```
 git clone https://github.com/veneresabrina/ChimerDriver.git
 cd ChimerDriver
 unzip processed_db.zip
+python -m pip install --upgrade pip           # ensure you have the last version of pip
+python -m pip install -r requirements.txt
+```
 
+## 1.3 Test if everything is ok
+Once you have followed the previous steps, test the tool with the following commands:
+
+```
+conda activate ChimerDriver # command to activate virtual environment if you followed our installation guide
 
 python ChimerDriver.py build train_test_sets train_test_sets/mytest.csv test N
 python ChimerDriver.py load_test_model train_test_sets train_test_sets/mytest.csv train_test_sets/feat_selall.txt best_model.h5
+```
+
+If everything worked correctly, you would find the _ChimerDriver_results.csv_ file in the _train_test_sets_ folder after a few seconds.
+It is done. You are now ready to use ChimerDriver!
+
+
 
 ```mermaid
 graph LR
