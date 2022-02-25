@@ -12,21 +12,20 @@ The main contribution consists in the introduction of global information (miRNAs
 
 
 # 0. Citation
+You can find all the theory details about ChimerDriver here: https://www.biorxiv.org/content/10.1101/2021.10.20.465128v1.abstract
+If you use the **ChimerDriver** tool, please cite the following:
 
-Please cite the following paper if this code was useful for your research:
+Lovino, M., Montemurro, M., Barrese, V. S., & Ficarra, E. (2021). Identifying the oncogenic potential of gene fusions exploiting miRNAs. bioRxiv.
 
-Download from here (PDF): 
 
-```
-@article{,
-    author =       "",
-    title =        "{}",
-    booktitle =    "{},
-    pages =        "",
-    year =         "",
-}
+> @article{lovino2021identifying,
+> title={Identifying the oncogenic potential of gene fusions exploiting miRNAs},
+> author={Lovino, Marta and Montemurro, Marilisa and Barrese, Venere Sabrina and Ficarra, Elisa},
+> journal={bioRxiv},
+> year={2021},
+> publisher={Cold Spring Harbor Laboratory}}
 
-```
+
 
 # 1. Getting Started
 
@@ -48,7 +47,7 @@ First of all, check if you have pip and conda installed in your system. If pip a
 ```
 conda activate
 ```
-Now copy and paste these instructions to create and activate a DEEPrior virtual environment called *DEEPenv* with conda:
+Now copy and paste these instructions to create and activate a ChimerDriver virtual environment called *ChimerDriver* with conda:
 
 ```
 conda create --name ChimerDriver python=3.6.12  #create a new virtual environment with a selected version of python
@@ -211,5 +210,5 @@ Please note that before testing a new dataset it is needed to perform the "build
 
 # License
 
-This project is licensed under the AGPL v3 License - see the [LICENSE.rst](LICENSE.rst) file for details
+This project is licensed under the AGPL v3 License - see the [LICENSE](LICENSE) file for details
 
