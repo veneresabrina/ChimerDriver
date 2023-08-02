@@ -17,15 +17,16 @@ If you use the **ChimerDriver** tool, please cite the following:
 
 **Lovino, Marta, et al. "Identifying the oncogenic potential of gene fusions exploiting miRNAs." Journal of Biomedical Informatics 129 (2022): 104057**
 
-@article{lovino2022identifying,
-  title={Identifying the oncogenic potential of gene fusions exploiting miRNAs},
-  author={Lovino, Marta and Montemurro, Marilisa and Barrese, Venere S and Ficarra, Elisa},
-  journal={Journal of Biomedical Informatics},
-  volume={129},
-  pages={104057},
-  year={2022},
+> @article{lovino2022identifying,\
+  title={Identifying the oncogenic potential of gene fusions exploiting miRNAs},\
+  author={Lovino, Marta and Montemurro, Marilisa and Barrese, Venere S and Ficarra, Elisa},\
+  journal={Journal of Biomedical Informatics},\
+  volume={129},\
+  pages={104057},\
+  year={2022},\
   publisher={Elsevier}
 }
+>
 
 
 
