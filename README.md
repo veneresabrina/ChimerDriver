@@ -15,20 +15,17 @@ The main contribution consists in the introduction of global information (miRNAs
 You can find all the theory details about ChimerDriver here: https://www.biorxiv.org/content/10.1101/2021.10.20.465128v1.abstract
 If you use the **ChimerDriver** tool, please cite the following:
 
-Lovino, M., Montemurro, M., Barrese, V. S., & Ficarra, E. (2021). _Identifying the oncogenic potential of gene fusions exploiting miRNAs_. bioRxiv.
+**Lovino, Marta, et al. "Identifying the oncogenic potential of gene fusions exploiting miRNAs." Journal of Biomedical Informatics 129 (2022): 104057**
 
-
-> @article{lovino2021identifying,
-> 
-> title={Identifying the oncogenic potential of gene fusions exploiting miRNAs},
-> 
-> author={Lovino, Marta and Montemurro, Marilisa and Barrese, Venere Sabrina and Ficarra, Elisa},
-> 
-> journal={bioRxiv},
-> 
-> year={2021},
-> 
-> publisher={Cold Spring Harbor Laboratory}}
+@article{lovino2022identifying,
+  title={Identifying the oncogenic potential of gene fusions exploiting miRNAs},
+  author={Lovino, Marta and Montemurro, Marilisa and Barrese, Venere S and Ficarra, Elisa},
+  journal={Journal of Biomedical Informatics},
+  volume={129},
+  pages={104057},
+  year={2022},
+  publisher={Elsevier}
+}
 
 
 
