@@ -46,7 +46,7 @@ The complete list of prerequisites is listed in the **requirements.txt** file.
 
 ## 1.2 Installing
 
-First of all, check if you have pip and conda installed in your system. If pip and/or conda are not installed in your system, follow the instructions to install miniconda [here] https://docs.conda.io/en/latest/miniconda.html#installing. If the conda base environment is not yet activated, run this command:
+First, check if you have pip and conda installed in your system. If pip and/or conda are not installed in your system, follow the instructions to install miniconda [here] https://docs.conda.io/en/latest/miniconda.html#installing. If the conda base environment is not yet activated, run this command:
 ```
 conda activate
 ```
@@ -69,7 +69,7 @@ python -m pip install -r requirements.txt
 Once you have followed the previous steps, test the tool with the following commands:
 
 ```
-conda activate ChimerDriver # command to activate virtual environment if you followed our installation guide
+conda activate ChimerDriver # command to activate the virtual environment if you followed our installation guide
 
 python ChimerDriver.py build train_test_sets train_test_sets/mytest.csv test N
 python ChimerDriver.py load_test_model train_test_sets train_test_sets/mytest.csv train_test_sets/feat_selall.txt best_model.h5
@@ -94,7 +94,7 @@ B --> C(get the oncogenic predictions)
 
 ## 2.0 Prepare your data
 Copy your dataset in the train_test_sets folder. This file should be a .csv and include the following information as columns:
-- FusionPair: The common names of the two genes separated by an underscore, format would be 5pCommonName_3pCommonName
+- FusionPair: The common names of the two genes are separated by an underscore, the format would be 5pCommonName_3pCommonName
 - 5pCommonName: The common name of the gene at the 5' position
 - 3pCommonName: The common name of the gene at the 3' position
 - Version: either grch37 or grch38
@@ -105,7 +105,7 @@ Copy your dataset in the train_test_sets folder. This file should be a .csv and 
 - 5pStrand: The 5' gene strand, either "+" or "-"
 - 3pStrand: The 3' gene strand, either "+" or "-"
 
-Ideally your dataset should also incluse a "Label" column. If your data is labeled and you intend to assign the same label to the entire dataset there is a functionality that allows this operation (go to section 4.2 to know more about this). On the other hand if the provided dataset is unlabeled the "Label" column can be excluded and the tool will still provide a classification in the output.
+Ideally, your dataset should also include a "Label" column. If your data is labeled and you intend to assign the same label to the entire dataset, there is a functionality that allows this operation (go to section 4.2 to know more about this). On the other hand, if the provided dataset is unlabeled, the "Label" column can be excluded, and the tool will still provide a classification in the output.
 
 ## 2.1 Activating the environment
 ```
@@ -121,6 +121,19 @@ python ChimerDriver.py build train_test_sets train_test_sets/mytest.csv test N
 ```
 python ChimerDriver.py load_test_model train_test_sets train_test_sets/mytest.csv train_test_sets/feat_selall.txt best_model.h5
 ```
+
+## 2.4 Interpret results
+In _ChimerDriver_results.csv_ file, you will find all the relevant information. 
+
+The column *Role* refers to the role of each gene involved in the gene fusion.
+The association between the value in the *Role* column and the gene role is the following:
+
+| *Role column value*  | Meaning |
+| :-------------:|:-------------:|
+|   1      | Tumor suppressor gene     |
+|   2      | Driver gene         |
+|   3      | Oncogene            |
+|   0      | None of the above     |
 
 # 3. Authors' credit
 
